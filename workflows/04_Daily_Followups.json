@@ -1,0 +1,335 @@
+{
+  "name": "Sponsorship Copilot - 04 Daily Followups",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "triggerAtHour": 9
+            }
+          ]
+        }
+      },
+      "id": "8dd79461-94ba-4c9b-998e-c7f5411bc82d",
+      "name": "Schedule Trigger (09:00)",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        0,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1wpp4WkEBkyyJyxduhQGZSgp7DCusEoNCXVlrnPVWGxQ",
+          "mode": "list",
+          "cachedResultName": "AI_Sponsorship_Database_Template",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1wpp4WkEBkyyJyxduhQGZSgp7DCusEoNCXVlrnPVWGxQ/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 700152727,
+          "mode": "list",
+          "cachedResultName": "Pipeline",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1wpp4WkEBkyyJyxduhQGZSgp7DCusEoNCXVlrnPVWGxQ/edit#gid=700152727"
+        },
+        "options": {}
+      },
+      "id": "d8784066-fd94-4d07-ae0e-7d537b29bc22",
+      "name": "Read Pipeline Followups",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.4,
+      "position": [
+        240,
+        0
+      ],
+      "alwaysOutputData": true,
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 1500
+    },
+    {
+      "parameters": {
+        "jsCode": "const today = new Intl.DateTimeFormat('en-CA',{timeZone:'Europe/Paris',year:'numeric',month:'2-digit',day:'2-digit'}).format(new Date());\nconst input=$input.all().map(i=>i.json);\nconst due=input.filter(r=>r.company_key && r.next_followup && /^\\d{4}-\\d{2}-\\d{2}$/.test(String(r.next_followup)) && String(r.next_followup)<=today && String(r.reminder_sent_for||'')!==String(r.next_followup) && !['Declined','Confirmed'].includes(String(r.status||'')) && /^-?\\d+$/.test(String(r.owner_chat_id||'')));\nreturn due.slice(0,30).map(r=>({json:{...r,chat_id:String(r.owner_chat_id),reply_text:`Sponsorship follow-up due: ${r.company}\\nStatus: ${r.status||'New'}\\nDue: ${r.next_followup}${r.notes?'\\nContext: '+String(r.notes).slice(0,320):''}\\n\\nUpdate with /status ${r.company} | Contacted or /followup ${r.company} | YYYY-MM-DD`}}));"
+      },
+      "id": "0cb1e700-c02d-4102-8518-c587c7e0960c",
+      "name": "Pick Due Followups",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        464,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "chatId": "={{$json.chat_id}}",
+        "text": "={{$json.reply_text}}",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "id": "ecdd2df6-ac8d-4e03-8432-ddf278c29663",
+      "name": "Telegram Send Reminder",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        704,
+        0
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 1500
+    },
+    {
+      "parameters": {
+        "jsCode": "const due=$('Pick Due Followups').all().map(x=>x.json);\nconst results=$input.all();\nreturn results.map((r,i)=>{const v=due[i]; if(!v) throw new Error('Missing source row for reminder response'); return {json:{company_key:v.company_key,company:v.company,status:v.status,next_followup:v.next_followup,notes:v.notes,owner_chat_id:v.owner_chat_id,last_contact_at:v.last_contact_at,updated_at:new Date().toISOString(),reminder_sent_for:v.next_followup}};});"
+      },
+      "id": "944e9f68-afbf-42d1-b79a-3b666fa4873c",
+      "name": "Mark Reminder Sent",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        944,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "appendOrUpdate",
+        "documentId": {
+          "__rl": true,
+          "value": "1wpp4WkEBkyyJyxduhQGZSgp7DCusEoNCXVlrnPVWGxQ",
+          "mode": "list",
+          "cachedResultName": "AI_Sponsorship_Database_Template",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1wpp4WkEBkyyJyxduhQGZSgp7DCusEoNCXVlrnPVWGxQ/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 700152727,
+          "mode": "list",
+          "cachedResultName": "Pipeline",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1wpp4WkEBkyyJyxduhQGZSgp7DCusEoNCXVlrnPVWGxQ/edit#gid=700152727"
+        },
+        "columns": {
+          "mappingMode": "autoMapInputData",
+          "value": {},
+          "matchingColumns": [
+            "company_key"
+          ],
+          "schema": [
+            {
+              "id": "company_key",
+              "displayName": "company_key",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "company",
+              "displayName": "company",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "status",
+              "displayName": "status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "next_followup",
+              "displayName": "next_followup",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "notes",
+              "displayName": "notes",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "owner_chat_id",
+              "displayName": "owner_chat_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "last_contact_at",
+              "displayName": "last_contact_at",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "updated_at",
+              "displayName": "updated_at",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "reminder_sent_for",
+              "displayName": "reminder_sent_for",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "valid",
+              "displayName": "valid",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "chat_id",
+              "displayName": "chat_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "reply_text",
+              "displayName": "reply_text",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "recipient_email",
+              "displayName": "recipient_email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "gmail_message_id",
+              "displayName": "gmail_message_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "id": "77e95240-7a71-4315-92b9-0cc0c311c3f1",
+      "name": "Save Reminder Sent Status",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.4,
+      "position": [
+        1184,
+        0
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 1500
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Schedule Trigger (09:00)": {
+      "main": [
+        [
+          {
+            "node": "Read Pipeline Followups",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Read Pipeline Followups": {
+      "main": [
+        [
+          {
+            "node": "Pick Due Followups",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Pick Due Followups": {
+      "main": [
+        [
+          {
+            "node": "Telegram Send Reminder",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Telegram Send Reminder": {
+      "main": [
+        [
+          {
+            "node": "Mark Reminder Sent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Mark Reminder Sent": {
+      "main": [
+        [
+          {
+            "node": "Save Reminder Sent Status",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "id": "euHupCK7cGgF88PO",
+  "tags": []
+}

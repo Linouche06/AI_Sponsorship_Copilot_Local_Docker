@@ -1,0 +1,137 @@
+{
+  "name": "Sponsorship Copilot - 03 Error Logger",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "64a79e32-83a3-4fac-9729-4c893c94989a",
+      "name": "Error Trigger",
+      "type": "n8n-nodes-base.errorTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "const x=$input.first().json;return [{json:{workflow:String(x.workflow?.name||'Unknown'),error_type:'WORKFLOW_ERROR',message:String(x.execution?.error?.message||'Unspecified error').slice(0,500),timestamp:new Date().toISOString()}}];"
+      },
+      "id": "578e2fab-1ecf-4b31-86e6-3228ca4d56da",
+      "name": "Format Error",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        208,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1wpp4WkEBkyyJyxduhQGZSgp7DCusEoNCXVlrnPVWGxQ",
+          "mode": "list",
+          "cachedResultName": "AI_Sponsorship_Database_Template",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1wpp4WkEBkyyJyxduhQGZSgp7DCusEoNCXVlrnPVWGxQ/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 767686323,
+          "mode": "list",
+          "cachedResultName": "ErrorLogs",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1wpp4WkEBkyyJyxduhQGZSgp7DCusEoNCXVlrnPVWGxQ/edit#gid=767686323"
+        },
+        "columns": {
+          "mappingMode": "autoMapInputData",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "workflow",
+              "displayName": "workflow",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "error_type",
+              "displayName": "error_type",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "message",
+              "displayName": "message",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "timestamp",
+              "displayName": "timestamp",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "id": "3486cbb9-fed2-467b-9e9f-7f007b895775",
+      "name": "Save Error",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.4,
+      "position": [
+        416,
+        0
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 1500
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Error Trigger": {
+      "main": [
+        [
+          {
+            "node": "Format Error",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Format Error": {
+      "main": [
+        [
+          {
+            "node": "Save Error",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "id": "0xeyqLHBxYj4vbND",
+  "tags": []
+}

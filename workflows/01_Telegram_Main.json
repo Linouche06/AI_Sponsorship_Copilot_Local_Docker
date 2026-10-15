@@ -1,0 +1,2235 @@
+{
+  "name": "Sponsorship Copilot - 01 Telegram Main",
+  "nodes": [
+    {
+      "parameters": {
+        "updates": [
+          "message"
+        ],
+        "additionalFields": {}
+      },
+      "id": "3f68e590-1525-4107-98fe-736b6276b15b",
+      "name": "Telegram Trigger",
+      "type": "n8n-nodes-base.telegramTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        32,
+        64
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "chat",
+              "name": "chat_id",
+              "value": "={{$json.message.chat.id}}",
+              "type": "number"
+            },
+            {
+              "id": "text",
+              "name": "text",
+              "value": "={{$json.message.text || \"\"}}",
+              "type": "string"
+            },
+            {
+              "id": "userid",
+              "name": "user_id",
+              "value": "={{$json.message.from.id}}",
+              "type": "number"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "b8a4ee63-96f0-4733-b66c-77457ba27903",
+      "name": "Set Message Fields",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        240,
+        64
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "const p = $input.first().json;\nconst text = String(p.text || '').trim();\nconst m = text.match(/^\\/(analyze|pitch|pipeline|help|start|status|followup|note|approve)(?:@\\w+)?(?:\\s+([\\s\\S]*))?$/i);\nconst name = m ? m[1].toLowerCase() : 'help';\nconst arg = m ? String(m[2] || '').trim() : '';\nlet command = name === 'start' ? 'help' : name;\nlet company = '', value = '', action = '';\nlet valid = !!m;\nlet reply_text = '';\nif (['analyze','pitch','approve'].includes(command)) {\n  company = arg;\n  if (!company) { command='help'; valid=false; reply_text='Please specify a company, e.g. /analyze MWM, /pitch MWM, or /approve MWM.'; }\n} else if (['status','followup','note'].includes(command)) {\n  const divider = arg.indexOf('|');\n  action = command;\n  company = divider>=0 ? arg.slice(0,divider).trim() : '';\n  value = divider>=0 ? arg.slice(divider+1).trim() : '';\n  command = 'update';\n  if (!company || !value) {\n    command='help'; valid=false;\n    reply_text='Use /status MWM | Contacted, /followup MWM | 2026-11-01, or /note MWM | Met at event.';\n  }\n} else if (command === 'help' && !m) {\n  reply_text = 'Unknown command. Here is the command list:';\n}\nreturn [{json:{...p,command,action,company,value,valid,reply_text}}];"
+      },
+      "id": "6d48e4a1-f90e-41eb-a8d8-e2f6c273ab38",
+      "name": "Parse Command",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        432,
+        64
+      ]
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "combinator": "and",
+                "conditions": [
+                  {
+                    "leftValue": "={{$json.command}}",
+                    "rightValue": "analyze",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ]
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "combinator": "and",
+                "conditions": [
+                  {
+                    "leftValue": "={{$json.command}}",
+                    "rightValue": "pitch",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ]
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "combinator": "and",
+                "conditions": [
+                  {
+                    "leftValue": "={{$json.command}}",
+                    "rightValue": "pipeline",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ]
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "combinator": "and",
+                "conditions": [
+                  {
+                    "leftValue": "={{$json.command}}",
+                    "rightValue": "update",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ]
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "combinator": "and",
+                "conditions": [
+                  {
+                    "leftValue": "={{$json.command}}",
+                    "rightValue": "approve",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        "options": {
+          "fallbackOutput": "extra"
+        }
+      },
+      "id": "d0508d8a-78af-4f39-a9a5-e762e3ca868f",
+      "name": "Switch Commands",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        624,
+        64
+      ]
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "",
+          "mode": "list"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "company": "={{$json.company}}",
+            "chat_id": "={{$json.chat_id}}"
+          },
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "mode": "each",
+        "options": {
+          "waitForSubWorkflow": true
+        }
+      },
+      "id": "a50a4b99-644b-453f-a057-eeb3f911644b",
+      "name": "Call Company Analysis",
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.3,
+      "position": [
+        832,
+        -176
+      ]
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1wpp4WkEBkyyJyxduhQGZSgp7DCusEoNCXVlrnPVWGxQ",
+          "mode": "list",
+          "cachedResultName": "AI_Sponsorship_Database_Template",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1wpp4WkEBkyyJyxduhQGZSgp7DCusEoNCXVlrnPVWGxQ/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1797842587,
+          "mode": "list",
+          "cachedResultName": "Analyses",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1wpp4WkEBkyyJyxduhQGZSgp7DCusEoNCXVlrnPVWGxQ/edit#gid=1797842587"
+        },
+        "options": {}
+      },
+      "id": "a0ab6443-e418-4fd9-8271-60da3ac56c99",
+      "name": "Read Analyses for Pitch",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.4,
+      "position": [
+        848,
+        0
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 1500
+    },
+    {
+      "parameters": {
+        "jsCode": "const q=$('Parse Command').first().json;const x=$input.all().map(i=>i.json).find(r=>String(r.company||'').toLowerCase()===String(q.company||'').toLowerCase());if(!x)return [{json:{...q,found:false,reply_text:'No analysis found. Start with /analyze COMPANY.'}}];return [{json:{...q,...x,found:true}}];"
+      },
+      "id": "69d26877-a156-46b8-8677-82aafd404dea",
+      "name": "Select Analysis",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1056,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "combinator": "and",
+          "conditions": [
+            {
+              "leftValue": "={{$json.found}}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "true"
+              }
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "85eb26ba-98b9-40b8-9676-b022523eb006",
+      "name": "Analysis Available?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        1232,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Write a tailored university-event sponsorship email DRAFT (150-230 words, not sent). Use ONLY the provided profile, recorded analysis, and relationship history; do not invent metrics, dates, prior discussions, contact people, a promised sponsorship or company commitments.\n\nVerified company name: {{ $json.company }}\nSponsorship score: {{ $json.score }}/100 ({{ $json.tier }})\nCompany relevance: {{ $json.reason }}\nPartnership suggestions, not confirmed: {{ $json.opportunities }}\n\nOrganization: {{ $json.association_name }}\nSender: {{ $json.sender_name }} {{ $json.sender_role }}\nEmail: {{ $json.sender_email }}\nWebsite: {{ $json.association_website }}\nEvent: {{ $json.event_name }}; city: {{ $json.event_city }}; date (blank means unknown): {{ $json.event_date }}\nDescription: {{ $json.event_description }}\nAudience: {{ $json.event_audience }}; attendance (only if provided): {{ $json.expected_attendance }}\nEvent goals: {{ $json.event_goals }}\nPreferred sponsorship request: {{ $json.proposed_sponsorship }}\nTone: {{ $json.tone }}\nCRM status (user-maintained, may not indicate actual communication): {{ $json.relationship_status }}\nRelationship notes written by user: {{ $json.relationship_notes }}\n\nPersonalize the business case with 1-2 grounded observations and 1-2 feasible proposals tailored to this company and event. Include an actionable, low-pressure call-to-action. If relationship notes explicitly describe a prior conversation, write a natural follow-up; otherwise write an initial introduction, regardless of status. If sender or association fields are placeholders, retain placeholders in brackets without claiming they are real. Do not include empty date or numeric fields. Do not assert that this company has agreed to anything. Do not send the email.\n\nFormat EXACTLY:\nSUBJECT: <single line>\n<email body and signature>",
+        "messages": {
+          "messageValues": [
+            {
+              "message": "You are an experienced sponsorship strategist for student associations. Write professional, accurately personalized outreach drafts. Company and event facts are restricted to the supplied data; all sponsorship ideas are proposals only."
+            }
+          ]
+        }
+      },
+      "id": "257527c8-01b4-43db-a20a-2e15bf274059",
+      "name": "AI Draft Email",
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.6,
+      "position": [
+        2032,
+        -208
+      ],
+      "retryOnFail": true,
+      "maxTries": 2,
+      "waitBetweenTries": 1500
+    },
+    {
+      "parameters": {
+        "model": "qwen2.5:3b",
+        "options": {
+          "temperature": 0.2
+        }
+      },
+      "id": "59eb990e-bbd1-41c6-9bad-5c4f95030d9b",
+      "name": "Ollama Model (Draft)",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOllama",
+      "typeVersion": 1,
+      "position": [
+        2032,
+        -368
+      ],
+      "retryOnFail": true,
+      "maxTries": 2,
+      "waitBetweenTries": 1500
+    },
+    {
+      "parameters": {
+        "jsCode": "const a=$('Build Personalization Context').first().json;\nconst raw=String($input.first().json.text||'');\nconst subject=(raw.match(/^SUBJECT:\\s*(.*)$/im)||[])[1]||`Partnership opportunity - ${a.company}`;\nconst draft=raw.replace(/^SUBJECT:.*\\n?/im,'').trim();\nreturn [{json:{company_key:a.company_key,company:a.company,subject,draft,created_at:new Date().toISOString(),status:'Draft',chat_id:a.chat_id,reply_text:`Draft for ${a.company}\\nSubject: ${subject}\\n\\n${draft}\\n\\nSaved as draft (not sent). Review it, verify contact_email in Companies, then use /approve ${a.company} to approve and send.`}}];"
+      },
+      "id": "2fb3be47-6061-41b5-a03f-05ab12c167e0",
+      "name": "Prepare Draft",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2304,
+        -208
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "appendOrUpdate",
+        "documentId": {
+          "__rl": true,
+          "value": "1wpp4WkEBkyyJyxduhQGZSgp7DCusEoNCXVlrnPVWGxQ",
+          "mode": "list",
+          "cachedResultName": "AI_Sponsorship_Database_Template",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1wpp4WkEBkyyJyxduhQGZSgp7DCusEoNCXVlrnPVWGxQ/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 243984214,
+          "mode": "list",
+          "cachedResultName": "Drafts",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1wpp4WkEBkyyJyxduhQGZSgp7DCusEoNCXVlrnPVWGxQ/edit#gid=243984214"
+        },
+        "columns": {
+          "mappingMode": "autoMapInputData",
+          "value": {},
+          "matchingColumns": [
+            "company_key"
+          ],
+          "schema": [
+            {
+              "id": "company_key",
+              "displayName": "company_key",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "company",
+              "displayName": "company",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "subject",
+              "displayName": "subject",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "draft",
+              "displayName": "draft",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "created_at",
+              "displayName": "created_at",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "status",
+              "displayName": "status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "chat_id",
+              "displayName": "chat_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "reply_text",
+              "displayName": "reply_text",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "id": "c8f62c01-2c5e-4a6f-b392-5ed2e8686c1e",
+      "name": "Save Draft",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.4,
+      "position": [
+        2432,
+        -208
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 1500
+    },
+    {
+      "parameters": {
+        "jsCode": "return [{json:$('Prepare Draft').first().json}];"
+      },
+      "id": "f595c62a-4081-49be-84af-805cd5243ed6",
+      "name": "Return Draft",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2624,
+        -208
+      ]
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1wpp4WkEBkyyJyxduhQGZSgp7DCusEoNCXVlrnPVWGxQ",
+          "mode": "list",
+          "cachedResultName": "AI_Sponsorship_Database_Template",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1wpp4WkEBkyyJyxduhQGZSgp7DCusEoNCXVlrnPVWGxQ/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1797842587,
+          "mode": "list",
+          "cachedResultName": "Analyses",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1wpp4WkEBkyyJyxduhQGZSgp7DCusEoNCXVlrnPVWGxQ/edit#gid=1797842587"
+        },
+        "options": {}
+      },
+      "id": "471714fa-0d71-4a31-9849-574ea2200fbe",
+      "name": "Read Pipeline",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.4,
+      "position": [
+        880,
+        336
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 1500
+    },
+    {
+      "parameters": {
+        "jsCode": "const q=$('Parse Command').first().json;\nconst analysed=$('Read Pipeline').all().map(i=>i.json).filter(r=>r.company_key);\nconst crm=$input.all().map(i=>i.json).filter(r=>r.company_key);\nconst crmByKey=new Map(crm.map(r=>[String(r.company_key).toLowerCase(),r]));\nconst analysedKeys=new Set(analysed.map(r=>String(r.company_key).toLowerCase()));\nconst merged=analysed.map(r=>({...r,...(crmByKey.get(String(r.company_key).toLowerCase())||{})}));\nfor (const r of crm) if(!analysedKeys.has(String(r.company_key).toLowerCase())) merged.push(r);\nconst today=new Intl.DateTimeFormat('en-CA',{timeZone:'Europe/Paris',year:'numeric',month:'2-digit',day:'2-digit'}).format(new Date());\nconst due=merged.filter(r=>r.next_followup && r.next_followup<=today && !['Declined','Confirmed'].includes(r.status) && r.reminder_sent_for!==r.next_followup);\nlet reply_text;\nif (!merged.length) reply_text='No sponsors in the pipeline yet. Try /analyze MWM.';\nelse {\n const lines=merged.slice(0,20).map(r=>`- ${r.company}: ${r.score!==undefined&&r.score!==''?r.score+'/100 ('+(r.tier||'')+') · ':''}${r.status||'New'}${r.next_followup?' · follow-up '+r.next_followup:''}`);\n reply_text=`Sponsorship Pipeline (${merged.length}):\\n${lines.join('\\n')}\\n\\nFollow-ups due: ${due.length}.\\nManage: /status MWM | Contacted or /followup MWM | 2026-11-01`;\n}\nreturn [{json:{chat_id:q.chat_id,reply_text}}];"
+      },
+      "id": "28892470-64ab-4c53-a99b-9745cfe69b9a",
+      "name": "Format Pipeline",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1248,
+        336
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "const q=$('Parse Command').first().json;\nconst guidance=`AI Sponsorship Copilot\\n/analyze COMPANY - sponsorship analysis\\n/pitch COMPANY - personalized email draft (does not send)\\n/approve COMPANY - APPROVE + SEND saved draft with Gmail (admin only)\\n/pipeline - scores, stages and follow-ups\\n/status MWM | Contacted - change stage\\n/followup MWM | 2026-11-01 - plan a reminder\\n/note MWM | Met at workshop - save context\\n/help - instructions\\n\\nStatuses: New, Researching, Contacted, In Discussion, Negotiating, Confirmed, Declined.`;\nreturn [{json:{chat_id:q.chat_id,reply_text:(q.reply_text?q.reply_text+'\\n\\n':'')+guidance}}];"
+      },
+      "id": "8cac8f8e-e858-4f39-ad20-d29b9f58a676",
+      "name": "Help Message",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        832,
+        544
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "const fallback=$('Parse Command').first().json;const x=$input.first().json;return [{json:{chat_id:x.chat_id||fallback.chat_id,reply_text:x.reply_text||'The request could not be completed. Please try again.'}}];"
+      },
+      "id": "b9a433fa-2d39-4a09-b530-8447389cb34d",
+      "name": "Normalize Final Reply",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2880,
+        96
+      ]
+    },
+    {
+      "parameters": {
+        "chatId": "={{$json.chat_id}}",
+        "text": "={{ String($json.reply_text ?? '')\n  .replace(/&/g, '&amp;')\n  .replace(/</g, '&lt;')\n  .replace(/>/g, '&gt;') }}",
+        "additionalFields": {
+          "appendAttribution": false,
+          "parse_mode": "HTML"
+        }
+      },
+      "id": "579dad08-20e1-4dee-b6d1-c93768ca1101",
+      "name": "Telegram Send Message",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        3184,
+        96
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "return [{json:$('Select Analysis').first().json}];"
+      },
+      "id": "fb992cc0-f90b-4a20-86a7-ad16e6f8961e",
+      "name": "Reply Missing Analysis",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1456,
+        128
+      ]
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1wpp4WkEBkyyJyxduhQGZSgp7DCusEoNCXVlrnPVWGxQ",
+          "mode": "list",
+          "cachedResultName": "AI_Sponsorship_Database_Template",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1wpp4WkEBkyyJyxduhQGZSgp7DCusEoNCXVlrnPVWGxQ/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 886497081,
+          "mode": "list",
+          "cachedResultName": "Companies",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1wpp4WkEBkyyJyxduhQGZSgp7DCusEoNCXVlrnPVWGxQ/edit#gid=886497081"
+        },
+        "options": {}
+      },
+      "id": "93b87c16-fc21-4b0a-84a0-a603e931436d",
+      "name": "Read Companies For Update",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.4,
+      "position": [
+        832,
+        752
+      ],
+      "alwaysOutputData": true,
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 1500
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1wpp4WkEBkyyJyxduhQGZSgp7DCusEoNCXVlrnPVWGxQ",
+          "mode": "list",
+          "cachedResultName": "AI_Sponsorship_Database_Template",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1wpp4WkEBkyyJyxduhQGZSgp7DCusEoNCXVlrnPVWGxQ/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 700152727,
+          "mode": "list",
+          "cachedResultName": "Pipeline",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1wpp4WkEBkyyJyxduhQGZSgp7DCusEoNCXVlrnPVWGxQ/edit#gid=700152727"
+        },
+        "options": {}
+      },
+      "id": "93a616e3-7505-4d82-aafb-eaffa66a0939",
+      "name": "Read Pipeline For Update",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.4,
+      "position": [
+        1040,
+        752
+      ],
+      "alwaysOutputData": true,
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 1500
+    },
+    {
+      "parameters": {
+        "jsCode": "const req = $('Parse Command').first().json;\nconst companies = $('Read Companies For Update').all().map(x=>x.json).filter(r=>r.company_key);\nconst existing = $input.all().map(x=>x.json).filter(r=>r.company_key);\nconst key = String(req.company||'').trim().toLowerCase().replace(/\\s+/g,'_');\nconst company = companies.find(r=>String(r.company_key||'').toLowerCase()===key || String(r.company||'').trim().toLowerCase()===String(req.company||'').trim().toLowerCase());\nconst failure = msg => [{json:{chat_id:req.chat_id,valid:false,reply_text:msg}}];\nif (!company) return failure('Company not found in Companies. Please check its spelling.');\nconst old = existing.find(r=>String(r.company_key||'').toLowerCase()===String(company.company_key).toLowerCase()) || {};\nconst statusLabels = {new:'New',researching:'Researching',contacted:'Contacted','in discussion':'In Discussion',negotiating:'Negotiating',confirmed:'Confirmed',declined:'Declined'};\nlet status = String(old.status||'New');\nlet next_followup = String(old.next_followup||'');\nlet notes = String(old.notes||'');\nlet last_contact_at = String(old.last_contact_at||'');\nlet reminder_sent_for = String(old.reminder_sent_for||'');\nconst today = new Intl.DateTimeFormat('en-CA',{timeZone:'Europe/Paris',year:'numeric',month:'2-digit',day:'2-digit'}).format(new Date());\nconst value = String(req.value||'').trim();\nlet info = '';\nif (req.action === 'status') {\n  const v = statusLabels[value.toLowerCase()];\n  if (!v) return failure('Invalid status. Choose New, Researching, Contacted, In Discussion, Negotiating, Confirmed, or Declined.');\n  status = v;\n  if (['Contacted','In Discussion','Negotiating'].includes(v)) last_contact_at=today;\n  info = `Status updated to ${status}`;\n} else if (req.action === 'followup') {\n  if (!/^\\d{4}-\\d{2}-\\d{2}$/.test(value)) return failure('Enter a date as YYYY-MM-DD, for example /followup MWM | 2026-11-01.');\n  const date = new Date(`${value}T00:00:00Z`);\n  if (Number.isNaN(date.valueOf()) || date.toISOString().slice(0,10)!==value) return failure('Invalid calendar date.');\n  next_followup = value;\n  reminder_sent_for = '';\n  info = `Next follow-up scheduled for ${value}`;\n} else if (req.action === 'note') {\n  if (value.length>400) return failure('Please keep the note under 400 characters.');\n  notes = value;\n  info = 'Relationship note saved';\n} else return failure('Unsupported update command.');\nconst updated_at=new Date().toISOString();\nreturn [{json:{valid:true,company_key:company.company_key,company:company.company,status,next_followup,notes,owner_chat_id:req.chat_id,last_contact_at,updated_at,reminder_sent_for,chat_id:req.chat_id,reply_text:`${company.company}: ${info}.\\nStatus: ${status}${next_followup?'\\nFollow-up: '+next_followup:''}`}}];"
+      },
+      "id": "80ce60c2-4668-471b-b8e9-65e55d826792",
+      "name": "Prepare Pipeline Update",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1248,
+        752
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "combinator": "and",
+          "conditions": [
+            {
+              "leftValue": "={{$json.valid}}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "true"
+              }
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "ff62a70d-47d4-4f3e-b958-ef686f25df3d",
+      "name": "Update Valid?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        1424,
+        752
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "appendOrUpdate",
+        "documentId": {
+          "__rl": true,
+          "value": "1wpp4WkEBkyyJyxduhQGZSgp7DCusEoNCXVlrnPVWGxQ",
+          "mode": "list",
+          "cachedResultName": "AI_Sponsorship_Database_Template",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1wpp4WkEBkyyJyxduhQGZSgp7DCusEoNCXVlrnPVWGxQ/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 700152727,
+          "mode": "list",
+          "cachedResultName": "Pipeline",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1wpp4WkEBkyyJyxduhQGZSgp7DCusEoNCXVlrnPVWGxQ/edit#gid=700152727"
+        },
+        "columns": {
+          "mappingMode": "autoMapInputData",
+          "value": {},
+          "matchingColumns": [
+            "company_key"
+          ],
+          "schema": [
+            {
+              "id": "company_key",
+              "displayName": "company_key",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "company",
+              "displayName": "company",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "status",
+              "displayName": "status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "next_followup",
+              "displayName": "next_followup",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "notes",
+              "displayName": "notes",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "owner_chat_id",
+              "displayName": "owner_chat_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "last_contact_at",
+              "displayName": "last_contact_at",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "updated_at",
+              "displayName": "updated_at",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "reminder_sent_for",
+              "displayName": "reminder_sent_for",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "valid",
+              "displayName": "valid",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "chat_id",
+              "displayName": "chat_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "reply_text",
+              "displayName": "reply_text",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "id": "3b892857-d968-45de-b8c6-0c531e9804dc",
+      "name": "Save Pipeline Update",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.4,
+      "position": [
+        1632,
+        544
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 1500
+    },
+    {
+      "parameters": {
+        "jsCode": "return [{json:$('Prepare Pipeline Update').first().json}];"
+      },
+      "id": "bd7e1c5b-4e7a-4af8-9dea-2be9b8b6ea98",
+      "name": "Return Pipeline Update",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1856,
+        544
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "return [{json:$('Prepare Pipeline Update').first().json}];"
+      },
+      "id": "7ff9c1f3-d2a2-417d-82b4-3a351cc96831",
+      "name": "Reply Invalid Update",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1648,
+        736
+      ]
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1wpp4WkEBkyyJyxduhQGZSgp7DCusEoNCXVlrnPVWGxQ",
+          "mode": "list",
+          "cachedResultName": "AI_Sponsorship_Database_Template",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1wpp4WkEBkyyJyxduhQGZSgp7DCusEoNCXVlrnPVWGxQ/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 700152727,
+          "mode": "list",
+          "cachedResultName": "Pipeline",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1wpp4WkEBkyyJyxduhQGZSgp7DCusEoNCXVlrnPVWGxQ/edit#gid=700152727"
+        },
+        "options": {}
+      },
+      "id": "b821495f-68c3-4a10-9c75-360b55c5f88d",
+      "name": "Read Pipeline CRM",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.4,
+      "position": [
+        1056,
+        336
+      ],
+      "alwaysOutputData": true,
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 1500
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1wpp4WkEBkyyJyxduhQGZSgp7DCusEoNCXVlrnPVWGxQ",
+          "mode": "list",
+          "cachedResultName": "AI_Sponsorship_Database_Template",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1wpp4WkEBkyyJyxduhQGZSgp7DCusEoNCXVlrnPVWGxQ/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1094237790,
+          "mode": "list",
+          "cachedResultName": "Organization",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1wpp4WkEBkyyJyxduhQGZSgp7DCusEoNCXVlrnPVWGxQ/edit#gid=1094237790"
+        },
+        "options": {}
+      },
+      "id": "2a2dd900-3570-49c2-b907-4c9dca5d764b",
+      "name": "Read Organization Profile",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.4,
+      "position": [
+        1424,
+        -160
+      ],
+      "alwaysOutputData": true,
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 1500
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1wpp4WkEBkyyJyxduhQGZSgp7DCusEoNCXVlrnPVWGxQ",
+          "mode": "list",
+          "cachedResultName": "AI_Sponsorship_Database_Template",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1wpp4WkEBkyyJyxduhQGZSgp7DCusEoNCXVlrnPVWGxQ/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 700152727,
+          "mode": "list",
+          "cachedResultName": "Pipeline",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1wpp4WkEBkyyJyxduhQGZSgp7DCusEoNCXVlrnPVWGxQ/edit#gid=700152727"
+        },
+        "options": {}
+      },
+      "id": "5a00c6bf-b68a-4949-b20a-93b51f6aeb30",
+      "name": "Read Sponsor Context",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.4,
+      "position": [
+        1632,
+        -160
+      ],
+      "alwaysOutputData": true,
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 1500
+    },
+    {
+      "parameters": {
+        "jsCode": "const a=$('Select Analysis').first().json;\nconst org=$('Read Organization Profile').all().map(x=>x.json).find(r=>r.association_name || r.event_name) || {};\nconst rows=$input.all().map(x=>x.json);\nconst c=rows.find(r=>String(r.company_key||'').toLowerCase()===String(a.company_key||'').toLowerCase()) || {};\nconst filled=v=>String(v??'').trim();\nreturn [{json:{...a,association_name:filled(org.association_name)||'[Association name]',sender_name:filled(org.sender_name)||'[Sender name]',sender_role:filled(org.sender_role),sender_email:filled(org.sender_email),event_name:filled(org.event_name)||'AI Builders Hackathon',event_city:filled(org.event_city)||'Paris / Cergy',event_date:filled(org.event_date),event_description:filled(org.event_description)||'Student-led AI product-building hackathon',event_audience:filled(org.event_audience)||'University students interested in AI',event_goals:filled(org.event_goals),expected_attendance:filled(org.expected_attendance),proposed_sponsorship:filled(org.proposed_sponsorship),association_website:filled(org.association_website),tone:filled(org.tone)||'professional and warm',relationship_status:filled(c.status)||'New',relationship_notes:filled(c.notes),next_followup:filled(c.next_followup)}}];"
+      },
+      "id": "0152bf65-fea9-4ef0-b0bd-32d4051c8fe5",
+      "name": "Build Personalization Context",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1824,
+        -160
+      ]
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1wpp4WkEBkyyJyxduhQGZSgp7DCusEoNCXVlrnPVWGxQ",
+          "mode": "list",
+          "cachedResultName": "AI_Sponsorship_Database_Template",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1wpp4WkEBkyyJyxduhQGZSgp7DCusEoNCXVlrnPVWGxQ/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 243984214,
+          "mode": "list",
+          "cachedResultName": "Drafts",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1wpp4WkEBkyyJyxduhQGZSgp7DCusEoNCXVlrnPVWGxQ/edit#gid=243984214"
+        },
+        "options": {}
+      },
+      "id": "2455d7b0-635d-497d-9293-40c2725ec021",
+      "name": "Read Draft for Approval",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.4,
+      "position": [
+        848,
+        944
+      ],
+      "alwaysOutputData": true,
+      "retryOnFail": true,
+      "maxTries": 2,
+      "waitBetweenTries": 2000
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1wpp4WkEBkyyJyxduhQGZSgp7DCusEoNCXVlrnPVWGxQ",
+          "mode": "list",
+          "cachedResultName": "AI_Sponsorship_Database_Template",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1wpp4WkEBkyyJyxduhQGZSgp7DCusEoNCXVlrnPVWGxQ/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 886497081,
+          "mode": "list",
+          "cachedResultName": "Companies",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1wpp4WkEBkyyJyxduhQGZSgp7DCusEoNCXVlrnPVWGxQ/edit#gid=886497081"
+        },
+        "options": {}
+      },
+      "id": "637cbdc3-0bf2-4fee-87c4-694bd0f4ad98",
+      "name": "Read Company Recipient",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.4,
+      "position": [
+        1040,
+        944
+      ],
+      "alwaysOutputData": true,
+      "retryOnFail": true,
+      "maxTries": 2,
+      "waitBetweenTries": 2000
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1wpp4WkEBkyyJyxduhQGZSgp7DCusEoNCXVlrnPVWGxQ",
+          "mode": "list",
+          "cachedResultName": "AI_Sponsorship_Database_Template",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1wpp4WkEBkyyJyxduhQGZSgp7DCusEoNCXVlrnPVWGxQ/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1094237790,
+          "mode": "list",
+          "cachedResultName": "Organization",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1wpp4WkEBkyyJyxduhQGZSgp7DCusEoNCXVlrnPVWGxQ/edit#gid=1094237790"
+        },
+        "options": {}
+      },
+      "id": "705c8633-b7d6-4885-8f21-4bfbaa44a9bc",
+      "name": "Read Approval Settings",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.4,
+      "position": [
+        1232,
+        944
+      ],
+      "alwaysOutputData": true,
+      "retryOnFail": true,
+      "maxTries": 2,
+      "waitBetweenTries": 2000
+    },
+    {
+      "parameters": {
+        "jsCode": "const req = $('Parse Command').first().json;\nconst key = String(req.company || '').trim().toLowerCase().replace(/\\s+/g,'_');\nconst pick = arr => arr.map(i=>i.json).filter(r=>r && Object.keys(r).length);\nconst drafts = pick($('Read Draft for Approval').all());\nconst companies = pick($('Read Company Recipient').all());\nconst orgs = pick($input.all());\nconst org = orgs.find(r=>r.approver_telegram_id || r.association_name) || {};\nconst match = r => String(r.company_key||'').toLowerCase()===key || String(r.company||'').toLowerCase()===String(req.company||'').trim().toLowerCase();\nconst draft = drafts.find(match);\nconst co = companies.find(match);\nconst fail = reason => [{json:{chat_id:req.chat_id,approved:false,reply_text:'Email NOT sent. '+reason}}];\n// Closed by default. The owner must explicitly set their numeric Telegram user ID in Organization.\nif (!String(org.approver_telegram_id||'').trim()) return fail('Add your Telegram user ID to Organization.approver_telegram_id first.');\nif (String(req.user_id)!==String(org.approver_telegram_id).trim()) return fail('You are not authorized to approve emails.');\nif (String(req.chat_id)!==String(req.user_id)) return fail('Approvals are allowed only in a private Telegram chat.');\nif (!co) return fail('Company not found in Companies.');\nif (!draft) return fail('No saved draft. Run /pitch '+req.company+' first.');\nif (String(draft.status||'').toLowerCase()==='sent') return fail('This draft has already been sent. Create a new one with /pitch if necessary.');\nif (String(draft.status||'').toLowerCase()!=='draft') return fail('Draft status must be Draft. Current status: '+String(draft.status||'(blank)'));\nconst to = String(co.contact_email||'').trim();\nif (!/^[^\\s@<>]+@[^\\s@<>]+\\.[^\\s@<>]+$/.test(to)) return fail('Provide a valid, verified contact_email in Companies before approving.');\nif (!['yes','true','verified','1'].includes(String(co.contact_verified||'').trim().toLowerCase())) return fail('Set Companies.contact_verified to YES after you verify the address.');\nconst subject=String(draft.subject||'').trim();\nconst body=String(draft.draft||'').trim();\nif (!subject || !body || body.length<60) return fail('The saved email is missing a subject or full body.');\nif (/\\b(association name|your name|\\[sender name\\]|\\[association name\\])\\b/i.test(body)) return fail('Your draft still contains placeholders. Edit Drafts or Organization and regenerate it.');\nreturn [{json:{approved:true,chat_id:req.chat_id,user_id:req.user_id,company_key:co.company_key,company:co.company,\n recipient_email:to,subject,draft:body,created_at:draft.created_at||'',\n approved_at:new Date().toISOString(),approved_by:String(req.user_id),\n reply_text:'Approved: '+co.company+'; sending to '+to+'...'}}];"
+      },
+      "id": "009d719c-2fe4-41c7-9cbf-21980412e008",
+      "name": "Validate Approval & Recipient",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1456,
+        944
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "combinator": "and",
+          "conditions": [
+            {
+              "leftValue": "={{$json.approved}}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "true"
+              }
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "5fb2f889-c44a-4f4c-ab09-417cdc8b2c94",
+      "name": "Approval Valid?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        1648,
+        944
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "return [{json:$('Validate Approval & Recipient').first().json}];"
+      },
+      "id": "bbcc69af-a064-4555-8237-0fb35bdb0ca7",
+      "name": "Reply Approval Blocked",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1856,
+        1136
+      ]
+    },
+    {
+      "parameters": {
+        "sendTo": "={{$json.recipient_email}}",
+        "subject": "={{$json.subject}}",
+        "emailType": "text",
+        "message": "={{$json.draft}}",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "id": "0d78eb62-ad58-48c1-803c-f5dd660a9a1e",
+      "name": "Gmail Send Approved",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        1856,
+        912
+      ],
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "jsCode": "const approved=$('Validate Approval & Recipient').first().json;\nreturn [{json:{chat_id:approved.chat_id,reply_text:\n 'Email could not be confirmed as sent to '+approved.recipient_email+'. Check Gmail Sent before retrying. Pipeline status was NOT changed. Error: '+String($input.first().json.error?.message||$input.first().json.message||'Unknown Gmail error')}}];"
+      },
+      "id": "1c2f1446-17d0-4e47-8aa0-8d07dfa476a8",
+      "name": "Format Gmail Failure",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2032,
+        1136
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "const a=$('Validate Approval & Recipient').first().json;\nconst gmail=$input.first().json;\nif (!gmail.id) throw new Error('Gmail response contains no message ID. Check Gmail Sent before retrying.');\nreturn [{json:{company_key:a.company_key,company:a.company,subject:a.subject,draft:a.draft,\n created_at:a.created_at,status:'Sent',recipient_email:a.recipient_email,\n approved_at:a.approved_at,approved_by:a.approved_by,\n sent_at:new Date().toISOString(),gmail_message_id:String(gmail.id),chat_id:a.chat_id}}];"
+      },
+      "id": "41958ee2-4f6c-4fe1-8b4d-a1ee9bcbdacf",
+      "name": "Build Sent Draft Record",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2048,
+        912
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "appendOrUpdate",
+        "documentId": {
+          "__rl": true,
+          "value": "1wpp4WkEBkyyJyxduhQGZSgp7DCusEoNCXVlrnPVWGxQ",
+          "mode": "list",
+          "cachedResultName": "AI_Sponsorship_Database_Template",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1wpp4WkEBkyyJyxduhQGZSgp7DCusEoNCXVlrnPVWGxQ/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 243984214,
+          "mode": "list",
+          "cachedResultName": "Drafts",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1wpp4WkEBkyyJyxduhQGZSgp7DCusEoNCXVlrnPVWGxQ/edit#gid=243984214"
+        },
+        "columns": {
+          "mappingMode": "autoMapInputData",
+          "value": {},
+          "matchingColumns": [
+            "company_key"
+          ],
+          "schema": [
+            {
+              "id": "company_key",
+              "displayName": "company_key",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "company",
+              "displayName": "company",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "subject",
+              "displayName": "subject",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "draft",
+              "displayName": "draft",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "created_at",
+              "displayName": "created_at",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "status",
+              "displayName": "status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "chat_id",
+              "displayName": "chat_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "reply_text",
+              "displayName": "reply_text",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "id": "42c718fb-a9de-4a6e-b68c-5d679369600a",
+      "name": "Save Sent Draft Status",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.4,
+      "position": [
+        2240,
+        912
+      ],
+      "retryOnFail": true,
+      "maxTries": 2,
+      "waitBetweenTries": 1500
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1wpp4WkEBkyyJyxduhQGZSgp7DCusEoNCXVlrnPVWGxQ",
+          "mode": "list",
+          "cachedResultName": "AI_Sponsorship_Database_Template",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1wpp4WkEBkyyJyxduhQGZSgp7DCusEoNCXVlrnPVWGxQ/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 700152727,
+          "mode": "list",
+          "cachedResultName": "Pipeline",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1wpp4WkEBkyyJyxduhQGZSgp7DCusEoNCXVlrnPVWGxQ/edit#gid=700152727"
+        },
+        "options": {}
+      },
+      "id": "0272b0d3-413b-4d47-bcb8-b238fc5f77f2",
+      "name": "Read CRM After Send",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.4,
+      "position": [
+        2448,
+        912
+      ],
+      "alwaysOutputData": true,
+      "retryOnFail": true,
+      "maxTries": 2,
+      "waitBetweenTries": 2000
+    },
+    {
+      "parameters": {
+        "jsCode": "const sent=$('Build Sent Draft Record').first().json;\nconst old=$input.all().map(i=>i.json).find(r=>String(r.company_key||'').toLowerCase()===String(sent.company_key).toLowerCase())||{};\nreturn [{json:{company_key:sent.company_key,company:sent.company,\n status:'Contacted',notes:String(old.notes||''),next_followup:String(old.next_followup||''),\n owner_chat_id:old.owner_chat_id||sent.chat_id,last_contact_at:sent.sent_at,updated_at:new Date().toISOString(),\n reminder_sent_for:String(old.reminder_sent_for||''),\n chat_id:sent.chat_id,recipient_email:sent.recipient_email,gmail_message_id:sent.gmail_message_id}}];"
+      },
+      "id": "e1c27cf1-cf3a-4a2a-bdc6-3d8c32617e62",
+      "name": "Build Contacted Update",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2672,
+        912
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "appendOrUpdate",
+        "documentId": {
+          "__rl": true,
+          "value": "1wpp4WkEBkyyJyxduhQGZSgp7DCusEoNCXVlrnPVWGxQ",
+          "mode": "list",
+          "cachedResultName": "AI_Sponsorship_Database_Template",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1wpp4WkEBkyyJyxduhQGZSgp7DCusEoNCXVlrnPVWGxQ/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 700152727,
+          "mode": "list",
+          "cachedResultName": "Pipeline",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1wpp4WkEBkyyJyxduhQGZSgp7DCusEoNCXVlrnPVWGxQ/edit#gid=700152727"
+        },
+        "columns": {
+          "mappingMode": "autoMapInputData",
+          "value": {},
+          "matchingColumns": [
+            "company_key"
+          ],
+          "schema": [
+            {
+              "id": "company_key",
+              "displayName": "company_key",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "company",
+              "displayName": "company",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "status",
+              "displayName": "status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "next_followup",
+              "displayName": "next_followup",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "notes",
+              "displayName": "notes",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "owner_chat_id",
+              "displayName": "owner_chat_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "last_contact_at",
+              "displayName": "last_contact_at",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "updated_at",
+              "displayName": "updated_at",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "reminder_sent_for",
+              "displayName": "reminder_sent_for",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "valid",
+              "displayName": "valid",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "chat_id",
+              "displayName": "chat_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "reply_text",
+              "displayName": "reply_text",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "id": "b693b565-41e3-4b33-9180-b32be9ad28cd",
+      "name": "Save Contacted Status",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.4,
+      "position": [
+        2896,
+        912
+      ],
+      "retryOnFail": true,
+      "maxTries": 2,
+      "waitBetweenTries": 1500
+    },
+    {
+      "parameters": {
+        "jsCode": "const a=$('Build Contacted Update').first().json;\nreturn [{json:{chat_id:a.chat_id,reply_text:\n 'Email sent via Gmail to '+a.recipient_email+' for '+a.company+'.\\nDraft status: Sent.\\nPipeline status: Contacted.\\nGmail message ID: '+a.gmail_message_id}}];"
+      },
+      "id": "4b8520dd-4401-43ad-89ae-08223933b5e5",
+      "name": "Return Gmail Confirmation",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        3664,
+        912
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "94ee283e-8436-40d4-b409-6b64d7937126",
+              "name": "company_key",
+              "value": "={{ $('Build Contacted Update').first().json.company_key }}",
+              "type": "string"
+            },
+            {
+              "id": "a79134a2-641c-4526-8e38-1dcfafbe461f",
+              "name": "status",
+              "value": "Contacted",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.5,
+      "position": [
+        3104,
+        912
+      ],
+      "id": "43766be6-3354-4ef9-b5e0-f351d8da1395",
+      "name": "Prepare Company Status"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "1wpp4WkEBkyyJyxduhQGZSgp7DCusEoNCXVlrnPVWGxQ",
+          "mode": "list",
+          "cachedResultName": "AI_Sponsorship_Database_Template",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1wpp4WkEBkyyJyxduhQGZSgp7DCusEoNCXVlrnPVWGxQ/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 886497081,
+          "mode": "list",
+          "cachedResultName": "Companies",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1wpp4WkEBkyyJyxduhQGZSgp7DCusEoNCXVlrnPVWGxQ/edit#gid=886497081"
+        },
+        "columns": {
+          "mappingMode": "autoMapInputData",
+          "value": {},
+          "matchingColumns": [
+            "company_key"
+          ],
+          "schema": [
+            {
+              "id": "company_key",
+              "displayName": "company_key",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "company",
+              "displayName": "company",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "industry",
+              "displayName": "industry",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "contact_email",
+              "displayName": "contact_email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "contact_verified",
+              "displayName": "contact_verified",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "description",
+              "displayName": "description",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "tags",
+              "displayName": "tags",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "website",
+              "displayName": "website",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "partnership_ideas",
+              "displayName": "partnership_ideas",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "status",
+              "displayName": "status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        3376,
+        912
+      ],
+      "id": "de02fe70-7e55-452c-ab7f-3a596b1a99ed",
+      "name": "Update Companies Status"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Telegram Trigger": {
+      "main": [
+        [
+          {
+            "node": "Set Message Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set Message Fields": {
+      "main": [
+        [
+          {
+            "node": "Parse Command",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Parse Command": {
+      "main": [
+        [
+          {
+            "node": "Switch Commands",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Call Company Analysis": {
+      "main": [
+        [
+          {
+            "node": "Normalize Final Reply",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Read Analyses for Pitch": {
+      "main": [
+        [
+          {
+            "node": "Select Analysis",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Select Analysis": {
+      "main": [
+        [
+          {
+            "node": "Analysis Available?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Draft Email": {
+      "main": [
+        [
+          {
+            "node": "Prepare Draft",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Prepare Draft": {
+      "main": [
+        [
+          {
+            "node": "Save Draft",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Save Draft": {
+      "main": [
+        [
+          {
+            "node": "Return Draft",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Return Draft": {
+      "main": [
+        [
+          {
+            "node": "Normalize Final Reply",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Read Pipeline": {
+      "main": [
+        [
+          {
+            "node": "Read Pipeline CRM",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Format Pipeline": {
+      "main": [
+        [
+          {
+            "node": "Normalize Final Reply",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Help Message": {
+      "main": [
+        [
+          {
+            "node": "Normalize Final Reply",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Normalize Final Reply": {
+      "main": [
+        [
+          {
+            "node": "Telegram Send Message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch Commands": {
+      "main": [
+        [
+          {
+            "node": "Call Company Analysis",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Read Analyses for Pitch",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Read Pipeline",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Read Companies For Update",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Read Draft for Approval",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Help Message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Analysis Available?": {
+      "main": [
+        [
+          {
+            "node": "Read Organization Profile",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Reply Missing Analysis",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Reply Missing Analysis": {
+      "main": [
+        [
+          {
+            "node": "Normalize Final Reply",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Read Companies For Update": {
+      "main": [
+        [
+          {
+            "node": "Read Pipeline For Update",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Read Pipeline For Update": {
+      "main": [
+        [
+          {
+            "node": "Prepare Pipeline Update",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Prepare Pipeline Update": {
+      "main": [
+        [
+          {
+            "node": "Update Valid?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update Valid?": {
+      "main": [
+        [
+          {
+            "node": "Save Pipeline Update",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Reply Invalid Update",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Save Pipeline Update": {
+      "main": [
+        [
+          {
+            "node": "Return Pipeline Update",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Return Pipeline Update": {
+      "main": [
+        [
+          {
+            "node": "Normalize Final Reply",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Reply Invalid Update": {
+      "main": [
+        [
+          {
+            "node": "Normalize Final Reply",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Read Pipeline CRM": {
+      "main": [
+        [
+          {
+            "node": "Format Pipeline",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Read Organization Profile": {
+      "main": [
+        [
+          {
+            "node": "Read Sponsor Context",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Read Sponsor Context": {
+      "main": [
+        [
+          {
+            "node": "Build Personalization Context",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build Personalization Context": {
+      "main": [
+        [
+          {
+            "node": "AI Draft Email",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Read Draft for Approval": {
+      "main": [
+        [
+          {
+            "node": "Read Company Recipient",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Read Company Recipient": {
+      "main": [
+        [
+          {
+            "node": "Read Approval Settings",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Read Approval Settings": {
+      "main": [
+        [
+          {
+            "node": "Validate Approval & Recipient",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Validate Approval & Recipient": {
+      "main": [
+        [
+          {
+            "node": "Approval Valid?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Approval Valid?": {
+      "main": [
+        [
+          {
+            "node": "Gmail Send Approved",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Reply Approval Blocked",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Reply Approval Blocked": {
+      "main": [
+        [
+          {
+            "node": "Normalize Final Reply",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Gmail Send Approved": {
+      "main": [
+        [
+          {
+            "node": "Build Sent Draft Record",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Format Gmail Failure",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Format Gmail Failure": {
+      "main": [
+        [
+          {
+            "node": "Normalize Final Reply",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build Sent Draft Record": {
+      "main": [
+        [
+          {
+            "node": "Save Sent Draft Status",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Save Sent Draft Status": {
+      "main": [
+        [
+          {
+            "node": "Read CRM After Send",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Read CRM After Send": {
+      "main": [
+        [
+          {
+            "node": "Build Contacted Update",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build Contacted Update": {
+      "main": [
+        [
+          {
+            "node": "Save Contacted Status",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Save Contacted Status": {
+      "main": [
+        [
+          {
+            "node": "Prepare Company Status",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Return Gmail Confirmation": {
+      "main": [
+        [
+          {
+            "node": "Normalize Final Reply",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Prepare Company Status": {
+      "main": [
+        [
+          {
+            "node": "Update Companies Status",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update Companies Status": {
+      "main": [
+        [
+          {
+            "node": "Return Gmail Confirmation",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Ollama Model (Draft)": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Draft Email",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "timeSavedMode": "fixed",
+    "callerPolicy": "workflowsFromSameOwner",
+    "availableInMCP": false
+  },
+  "id": "hfbpgv8az82mChZb",
+  "tags": []
+}

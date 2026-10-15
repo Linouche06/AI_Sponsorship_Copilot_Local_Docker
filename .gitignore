@@ -1,0 +1,10 @@
+# Keep secrets and local dumps outside version control
+.env
+.env.*
+!.env.example
+*.log
+.DS_Store
+backups/
+postgres_data/
+n8n_data/
+ollama_data/

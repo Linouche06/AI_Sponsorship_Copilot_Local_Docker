@@ -1,0 +1,391 @@
+{
+  "name": "Sponsorship Copilot - 02 Company Analysis",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "0cc5022d-5a6e-4b8a-8aaa-780f6ee24ea9",
+      "name": "Sub-workflow Input",
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1,
+      "position": [
+        -16,
+        112
+      ]
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1wpp4WkEBkyyJyxduhQGZSgp7DCusEoNCXVlrnPVWGxQ",
+          "mode": "list",
+          "cachedResultName": "AI_Sponsorship_Database_Template",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1wpp4WkEBkyyJyxduhQGZSgp7DCusEoNCXVlrnPVWGxQ/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 886497081,
+          "mode": "list",
+          "cachedResultName": "Companies",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1wpp4WkEBkyyJyxduhQGZSgp7DCusEoNCXVlrnPVWGxQ/edit#gid=886497081"
+        },
+        "options": {}
+      },
+      "id": "0e45f9a6-254a-48b5-aafd-8c955d1dc7f3",
+      "name": "Read Companies",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.4,
+      "position": [
+        208,
+        112
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 1500
+    },
+    {
+      "parameters": {
+        "jsCode": "const req=$('Sub-workflow Input').first().json;\nconst key=(req.company||'').trim().toLowerCase();\nconst rows=$input.all().map(x=>x.json);\nconst c=rows.find(r=>String(r.company||'').toLowerCase()===key || String(r.company_key||'')===key.replace(/\\s+/g,'_'));\nif(!c)return [{json:{...req,found:false,reply_text:'Company not found. Try /analyze OVHcloud or another company from the Companies tab.'}}];\nreturn [{json:{...req,...c,found:true}}];"
+      },
+      "id": "55de428b-01ca-479d-ac85-cd41a454bf88",
+      "name": "Choose Company",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        416,
+        112
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 1
+          },
+          "conditions": [
+            {
+              "id": "found",
+              "leftValue": "={{$json.found}}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "true"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "dff06485-0416-4c55-8e3a-ec7165066f53",
+      "name": "Company Exists?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        608,
+        112
+      ]
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Evaluate the sponsor for this demo event. EVENT: Student AI Builders Hackathon in Paris/Cergy, audience: university students building AI products, needs: technical mentors, tools, workshops and prizes. COMPANY: {{ $json.company }}; industry: {{ $json.industry }}; description: {{ $json.description }}; tags: {{ $json.tags }}; partnership ideas: {{ $json.partnership_ideas }}. Do not claim the company has agreed to sponsor. Return exactly 2 short lines: REASON: ... and OPPORTUNITIES: ... . Only use supplied company info.",
+        "messages": {
+          "messageValues": [
+            {
+              "message": "You are a cautious university sponsorship analyst. Do not invent company facts or commitments."
+            }
+          ]
+        }
+      },
+      "id": "14f96144-3745-41b5-ad10-bd95e8fcb599",
+      "name": "AI Sponsorship Assessment",
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.6,
+      "position": [
+        816,
+        0
+      ],
+      "retryOnFail": true,
+      "maxTries": 2,
+      "waitBetweenTries": 1500
+    },
+    {
+      "parameters": {
+        "model": "qwen2.5:3b",
+        "options": {
+          "temperature": 0.2
+        }
+      },
+      "id": "403ab75d-095e-474a-b981-7c0d6e6f5ae3",
+      "name": "Ollama Model (Analysis)",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOllama",
+      "typeVersion": 1,
+      "position": [
+        816,
+        176
+      ],
+      "retryOnFail": true,
+      "maxTries": 2,
+      "waitBetweenTries": 1500
+    },
+    {
+      "parameters": {
+        "jsCode": "const c=$('Choose Company').first().json;\nconst ai=String($input.first().json.text||'');\nconst tags=String(c.tags||'').toLowerCase().split(',').map(x=>x.trim());\nconst tech=['ai','developers','software','cloud','models','coding','opensource','gpu','computing'];\nconst entrepreneurial=['startups','founders','entrepreneurship','students','community'];\nconst fit=Math.min(50,tags.filter(x=>tech.includes(x)).length*12);\nconst audience=Math.min(30,tags.filter(x=>entrepreneurial.includes(x)).length*10+10);\nconst activation=String(c.partnership_ideas||'').trim()?20:0;\nconst score=Math.min(100,fit+audience+activation);\nconst tier=score>=75?'High':score>=45?'Medium':'Low';\nconst reason=(ai.match(/REASON:\\s*([^\\n]+)/i)||[])[1]||'Fit based on the listed company profile.';\nconst opportunities=(ai.match(/OPPORTUNITIES:\\s*([^\\n]+)/i)||[])[1]||String(c.partnership_ideas||'Workshop or mentorship discussion');\nconst analyzed_at=new Date().toISOString();\nreturn [{json:{company_key:c.company_key,company:c.company,score,tier,reason,opportunities,analyzed_at,reply_text:`Sponsorship analysis: ${c.company}\\nFit score: ${score}/100 (${tier})\\nWhy: ${reason}\\nPotential partnership: ${opportunities}\\n\\nNext: /pitch ${c.company}`,chat_id:c.chat_id}}];"
+      },
+      "id": "15831743-7cc5-41d0-8b9e-f1a65db9e66e",
+      "name": "Score and Format",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1088,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "appendOrUpdate",
+        "documentId": {
+          "__rl": true,
+          "value": "1wpp4WkEBkyyJyxduhQGZSgp7DCusEoNCXVlrnPVWGxQ",
+          "mode": "list",
+          "cachedResultName": "AI_Sponsorship_Database_Template",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1wpp4WkEBkyyJyxduhQGZSgp7DCusEoNCXVlrnPVWGxQ/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1797842587,
+          "mode": "list",
+          "cachedResultName": "Analyses",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1wpp4WkEBkyyJyxduhQGZSgp7DCusEoNCXVlrnPVWGxQ/edit#gid=1797842587"
+        },
+        "columns": {
+          "mappingMode": "autoMapInputData",
+          "value": {},
+          "matchingColumns": [
+            "company_key"
+          ],
+          "schema": [
+            {
+              "id": "company_key",
+              "displayName": "company_key",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "company",
+              "displayName": "company",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "score",
+              "displayName": "score",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "tier",
+              "displayName": "tier",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "reason",
+              "displayName": "reason",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "opportunities",
+              "displayName": "opportunities",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "analyzed_at",
+              "displayName": "analyzed_at",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "id": "a612f99e-65ff-4d0d-af32-54b69214cc83",
+      "name": "Save Analysis",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.4,
+      "position": [
+        1280,
+        0
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 1500
+    },
+    {
+      "parameters": {
+        "jsCode": "return [{json:$('Score and Format').first().json}];"
+      },
+      "id": "94f966e8-734c-4be6-9cbe-cbb67b083926",
+      "name": "Return Analysis",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1472,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "return [{json:$('Choose Company').first().json}];"
+      },
+      "id": "e27298b1-f2f7-48a5-ac74-e7e6a266f41c",
+      "name": "Return Missing Company",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        832,
+        336
+      ]
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Sub-workflow Input": {
+      "main": [
+        [
+          {
+            "node": "Read Companies",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Read Companies": {
+      "main": [
+        [
+          {
+            "node": "Choose Company",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Choose Company": {
+      "main": [
+        [
+          {
+            "node": "Company Exists?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Company Exists?": {
+      "main": [
+        [
+          {
+            "node": "AI Sponsorship Assessment",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Return Missing Company",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Sponsorship Assessment": {
+      "main": [
+        [
+          {
+            "node": "Score and Format",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Score and Format": {
+      "main": [
+        [
+          {
+            "node": "Save Analysis",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Save Analysis": {
+      "main": [
+        [
+          {
+            "node": "Return Analysis",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Ollama Model (Analysis)": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Sponsorship Assessment",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "id": "IhoNjEIf6BnSw5uG",
+  "tags": []
+}
