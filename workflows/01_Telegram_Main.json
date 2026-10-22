@@ -15,7 +15,14 @@
       "position": [
         32,
         64
-      ]
+      ],
+      "webhookId": "db339fa4-a951-4ecb-9d24-7b69ac1c545c",
+      "credentials": {
+        "telegramApi": {
+          "id": "qcuC6LlRLQuW03Fw",
+          "name": "Telegram account"
+        }
+      }
     },
     {
       "parameters": {
@@ -193,8 +200,9 @@
       "parameters": {
         "workflowId": {
           "__rl": true,
-          "value": "",
-          "mode": "list"
+          "mode": "list",
+          "value": "IhoNjEIf6BnSw5uG",
+          "cachedResultName": "Sponsorship Copilot - 02 Company Analysis"
         },
         "workflowInputs": {
           "mappingMode": "defineBelow",
@@ -249,7 +257,13 @@
       ],
       "retryOnFail": true,
       "maxTries": 3,
-      "waitBetweenTries": 1500
+      "waitBetweenTries": 1500,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "16HxzQ2JQPjvUjYl",
+          "name": "Google Sheets account"
+        }
+      }
     },
     {
       "parameters": {
@@ -337,7 +351,13 @@
       ],
       "retryOnFail": true,
       "maxTries": 2,
-      "waitBetweenTries": 1500
+      "waitBetweenTries": 1500,
+      "credentials": {
+        "ollamaApi": {
+          "id": "copilotLocalOllama",
+          "name": "Local Ollama (Docker)"
+        }
+      }
     },
     {
       "parameters": {
@@ -465,7 +485,13 @@
       ],
       "retryOnFail": true,
       "maxTries": 3,
-      "waitBetweenTries": 1500
+      "waitBetweenTries": 1500,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "16HxzQ2JQPjvUjYl",
+          "name": "Google Sheets account"
+        }
+      }
     },
     {
       "parameters": {
@@ -508,7 +534,13 @@
       ],
       "retryOnFail": true,
       "maxTries": 3,
-      "waitBetweenTries": 1500
+      "waitBetweenTries": 1500,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "16HxzQ2JQPjvUjYl",
+          "name": "Google Sheets account"
+        }
+      }
     },
     {
       "parameters": {
@@ -565,7 +597,14 @@
       "position": [
         3184,
         96
-      ]
+      ],
+      "webhookId": "9cd9e9ec-0925-42a0-a959-7193b6fd597c",
+      "credentials": {
+        "telegramApi": {
+          "id": "qcuC6LlRLQuW03Fw",
+          "name": "Telegram account"
+        }
+      }
     },
     {
       "parameters": {
@@ -609,7 +648,13 @@
       "alwaysOutputData": true,
       "retryOnFail": true,
       "maxTries": 3,
-      "waitBetweenTries": 1500
+      "waitBetweenTries": 1500,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "16HxzQ2JQPjvUjYl",
+          "name": "Google Sheets account"
+        }
+      }
     },
     {
       "parameters": {
@@ -640,7 +685,13 @@
       "alwaysOutputData": true,
       "retryOnFail": true,
       "maxTries": 3,
-      "waitBetweenTries": 1500
+      "waitBetweenTries": 1500,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "16HxzQ2JQPjvUjYl",
+          "name": "Google Sheets account"
+        }
+      }
     },
     {
       "parameters": {
@@ -836,7 +887,13 @@
       ],
       "retryOnFail": true,
       "maxTries": 3,
-      "waitBetweenTries": 1500
+      "waitBetweenTries": 1500,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "16HxzQ2JQPjvUjYl",
+          "name": "Google Sheets account"
+        }
+      }
     },
     {
       "parameters": {
@@ -893,7 +950,13 @@
       "alwaysOutputData": true,
       "retryOnFail": true,
       "maxTries": 3,
-      "waitBetweenTries": 1500
+      "waitBetweenTries": 1500,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "16HxzQ2JQPjvUjYl",
+          "name": "Google Sheets account"
+        }
+      }
     },
     {
       "parameters": {
@@ -924,7 +987,13 @@
       "alwaysOutputData": true,
       "retryOnFail": true,
       "maxTries": 3,
-      "waitBetweenTries": 1500
+      "waitBetweenTries": 1500,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "16HxzQ2JQPjvUjYl",
+          "name": "Google Sheets account"
+        }
+      }
     },
     {
       "parameters": {
@@ -955,7 +1024,13 @@
       "alwaysOutputData": true,
       "retryOnFail": true,
       "maxTries": 3,
-      "waitBetweenTries": 1500
+      "waitBetweenTries": 1500,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "16HxzQ2JQPjvUjYl",
+          "name": "Google Sheets account"
+        }
+      }
     },
     {
       "parameters": {
@@ -999,7 +1074,13 @@
       "alwaysOutputData": true,
       "retryOnFail": true,
       "maxTries": 2,
-      "waitBetweenTries": 2000
+      "waitBetweenTries": 2000,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "16HxzQ2JQPjvUjYl",
+          "name": "Google Sheets account"
+        }
+      }
     },
     {
       "parameters": {
@@ -1030,7 +1111,13 @@
       "alwaysOutputData": true,
       "retryOnFail": true,
       "maxTries": 2,
-      "waitBetweenTries": 2000
+      "waitBetweenTries": 2000,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "16HxzQ2JQPjvUjYl",
+          "name": "Google Sheets account"
+        }
+      }
     },
     {
       "parameters": {
@@ -1061,11 +1148,17 @@
       "alwaysOutputData": true,
       "retryOnFail": true,
       "maxTries": 2,
-      "waitBetweenTries": 2000
+      "waitBetweenTries": 2000,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "16HxzQ2JQPjvUjYl",
+          "name": "Google Sheets account"
+        }
+      }
     },
     {
       "parameters": {
-        "jsCode": "const req = $('Parse Command').first().json;\nconst key = String(req.company || '').trim().toLowerCase().replace(/\\s+/g,'_');\nconst pick = arr => arr.map(i=>i.json).filter(r=>r && Object.keys(r).length);\nconst drafts = pick($('Read Draft for Approval').all());\nconst companies = pick($('Read Company Recipient').all());\nconst orgs = pick($input.all());\nconst org = orgs.find(r=>r.approver_telegram_id || r.association_name) || {};\nconst match = r => String(r.company_key||'').toLowerCase()===key || String(r.company||'').toLowerCase()===String(req.company||'').trim().toLowerCase();\nconst draft = drafts.find(match);\nconst co = companies.find(match);\nconst fail = reason => [{json:{chat_id:req.chat_id,approved:false,reply_text:'Email NOT sent. '+reason}}];\n// Closed by default. The owner must explicitly set their numeric Telegram user ID in Organization.\nif (!String(org.approver_telegram_id||'').trim()) return fail('Add your Telegram user ID to Organization.approver_telegram_id first.');\nif (String(req.user_id)!==String(org.approver_telegram_id).trim()) return fail('You are not authorized to approve emails.');\nif (String(req.chat_id)!==String(req.user_id)) return fail('Approvals are allowed only in a private Telegram chat.');\nif (!co) return fail('Company not found in Companies.');\nif (!draft) return fail('No saved draft. Run /pitch '+req.company+' first.');\nif (String(draft.status||'').toLowerCase()==='sent') return fail('This draft has already been sent. Create a new one with /pitch if necessary.');\nif (String(draft.status||'').toLowerCase()!=='draft') return fail('Draft status must be Draft. Current status: '+String(draft.status||'(blank)'));\nconst to = String(co.contact_email||'').trim();\nif (!/^[^\\s@<>]+@[^\\s@<>]+\\.[^\\s@<>]+$/.test(to)) return fail('Provide a valid, verified contact_email in Companies before approving.');\nif (!['yes','true','verified','1'].includes(String(co.contact_verified||'').trim().toLowerCase())) return fail('Set Companies.contact_verified to YES after you verify the address.');\nconst subject=String(draft.subject||'').trim();\nconst body=String(draft.draft||'').trim();\nif (!subject || !body || body.length<60) return fail('The saved email is missing a subject or full body.');\nif (/\\b(association name|your name|\\[sender name\\]|\\[association name\\])\\b/i.test(body)) return fail('Your draft still contains placeholders. Edit Drafts or Organization and regenerate it.');\nreturn [{json:{approved:true,chat_id:req.chat_id,user_id:req.user_id,company_key:co.company_key,company:co.company,\n recipient_email:to,subject,draft:body,created_at:draft.created_at||'',\n approved_at:new Date().toISOString(),approved_by:String(req.user_id),\n reply_text:'Approved: '+co.company+'; sending to '+to+'...'}}];"
+        "jsCode": "const req = $('Parse Command').first().json;\nconst key = String(req.company || '').trim().toLowerCase().replace(/\\s+/g,'_');\nconst pick = arr => arr.map(i=>i.json).filter(r=>r && Object.keys(r).length);\nconst drafts = pick($('Read Draft for Approval').all());\nconst companies = pick($('Read Company Recipient').all());\nconst orgs = pick($input.all());\nconst org = orgs.find(r=>r.approver_telegram_id || r.association_name) || {};\nconst match = r => String(r.company_key||'').toLowerCase()===key || String(r.company||'').toLowerCase()===String(req.company||'').trim().toLowerCase();\nconst draft = drafts.find(match);\nconst co = companies.find(match);\nconst fail = reason => [{json:{chat_id:req.chat_id,approved:false,reply_text:'Email NOT sent. '+reason}}];\n// Closed by default. The owner must explicitly set their numeric Telegram user ID in Organization.\nif (!String(org.approver_telegram_id||'').trim()) return fail('Add your Telegram user ID to Organization.approver_telegram_id first.');\nif (String(req.user_id)!==String(org.approver_telegram_id).trim()) return fail('You are not authorized to approve emails.');\nif (String(req.chat_id)!==String(req.user_id)) return fail('Approvals are allowed only in a private Telegram chat.');\nif (!co) return fail('Company not found in Companies.');\nif (!draft) return fail('No saved draft. Run /pitch '+req.company+' first.');\nif (String(draft.status||'').toLowerCase()==='sent') return fail('This draft has already been sent. Create a new one with /pitch if necessary.');\nif (String(draft.status||'').toLowerCase()!=='draft') return fail('Draft status must be Draft. Current status: '+String(draft.status||'(blank)'));\nconst to = String(co.contact_email||'').trim();\nif (!/^[^\\s@<>]+@[^\\s@<>]+\\.[^\\s@<>]+$/.test(to)) return fail('Provide a valid, verified contact_email in Companies before approving.');\nif (!['yes','true','verified','1'].includes(String(co.contact_verified||'').trim().toLowerCase())) return fail('Set Companies.contact_verified to YES after you verify the address.');\nconst subject=String(draft.subject||'').trim();\nconst body=String(draft.draft||'').trim();\nif (!subject || !body || body.length<60) return fail('The saved email is missing a subject or full body.');\nif (/(?:\\b(?:association name|your name)\\b|\\[(?:sender name|association name)\\])/i.test(subject+'\\\\n'+body)) return fail('Your draft still contains placeholders. Edit Drafts or Organization and regenerate it.');\nreturn [{json:{approved:true,chat_id:req.chat_id,user_id:req.user_id,company_key:co.company_key,company:co.company,\n recipient_email:to,subject,draft:body,created_at:draft.created_at||'',\n approved_at:new Date().toISOString(),approved_by:String(req.user_id),\n reply_text:'Approved: '+co.company+'; sending to '+to+'...'}}];"
       },
       "id": "009d719c-2fe4-41c7-9cbf-21980412e008",
       "name": "Validate Approval & Recipient",
@@ -1139,6 +1232,13 @@
         1856,
         912
       ],
+      "webhookId": "6f172ec6-d487-49b3-bfc6-a61b8048ece6",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "1wtjlLLU3krMR8Qo",
+          "name": "Gmail account"
+        }
+      },
       "onError": "continueErrorOutput"
     },
     {
@@ -1280,7 +1380,13 @@
       ],
       "retryOnFail": true,
       "maxTries": 2,
-      "waitBetweenTries": 1500
+      "waitBetweenTries": 1500,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "16HxzQ2JQPjvUjYl",
+          "name": "Google Sheets account"
+        }
+      }
     },
     {
       "parameters": {
@@ -1311,7 +1417,13 @@
       "alwaysOutputData": true,
       "retryOnFail": true,
       "maxTries": 2,
-      "waitBetweenTries": 2000
+      "waitBetweenTries": 2000,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "16HxzQ2JQPjvUjYl",
+          "name": "Google Sheets account"
+        }
+      }
     },
     {
       "parameters": {
@@ -1475,7 +1587,13 @@
       ],
       "retryOnFail": true,
       "maxTries": 2,
-      "waitBetweenTries": 1500
+      "waitBetweenTries": 1500,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "16HxzQ2JQPjvUjYl",
+          "name": "Google Sheets account"
+        }
+      }
     },
     {
       "parameters": {
@@ -1658,7 +1776,13 @@
         912
       ],
       "id": "de02fe70-7e55-452c-ab7f-3a596b1a99ed",
-      "name": "Update Companies Status"
+      "name": "Update Companies Status",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "16HxzQ2JQPjvUjYl",
+          "name": "Google Sheets account"
+        }
+      }
     }
   ],
   "pinData": {},
@@ -2228,7 +2352,8 @@
     "binaryMode": "separate",
     "timeSavedMode": "fixed",
     "callerPolicy": "workflowsFromSameOwner",
-    "availableInMCP": false
+    "availableInMCP": false,
+    "errorWorkflow": "0xeyqLHBxYj4vbND"
   },
   "id": "hfbpgv8az82mChZb",
   "tags": []

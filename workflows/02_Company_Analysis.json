@@ -40,7 +40,13 @@
       ],
       "retryOnFail": true,
       "maxTries": 3,
-      "waitBetweenTries": 1500
+      "waitBetweenTries": 1500,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "16HxzQ2JQPjvUjYl",
+          "name": "Google Sheets account"
+        }
+      }
     },
     {
       "parameters": {
@@ -129,7 +135,13 @@
       ],
       "retryOnFail": true,
       "maxTries": 2,
-      "waitBetweenTries": 1500
+      "waitBetweenTries": 1500,
+      "credentials": {
+        "ollamaApi": {
+          "id": "copilotLocalOllama",
+          "name": "Local Ollama (Docker)"
+        }
+      }
     },
     {
       "parameters": {
@@ -254,7 +266,13 @@
       ],
       "retryOnFail": true,
       "maxTries": 3,
-      "waitBetweenTries": 1500
+      "waitBetweenTries": 1500,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "16HxzQ2JQPjvUjYl",
+          "name": "Google Sheets account"
+        }
+      }
     },
     {
       "parameters": {
@@ -384,7 +402,8 @@
   "active": false,
   "settings": {
     "executionOrder": "v1",
-    "binaryMode": "separate"
+    "binaryMode": "separate",
+    "errorWorkflow": "0xeyqLHBxYj4vbND"
   },
   "id": "IhoNjEIf6BnSw5uG",
   "tags": []

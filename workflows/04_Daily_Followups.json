@@ -49,7 +49,13 @@
       "alwaysOutputData": true,
       "retryOnFail": true,
       "maxTries": 3,
-      "waitBetweenTries": 1500
+      "waitBetweenTries": 1500,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "16HxzQ2JQPjvUjYl",
+          "name": "Google Sheets account"
+        }
+      }
     },
     {
       "parameters": {
@@ -82,7 +88,14 @@
       ],
       "retryOnFail": true,
       "maxTries": 3,
-      "waitBetweenTries": 1500
+      "waitBetweenTries": 1500,
+      "webhookId": "587f1c59-ed33-4c2a-b3fb-ca0f138d2781",
+      "credentials": {
+        "telegramApi": {
+          "id": "qcuC6LlRLQuW03Fw",
+          "name": "Telegram account"
+        }
+      }
     },
     {
       "parameters": {
@@ -264,7 +277,13 @@
       ],
       "retryOnFail": true,
       "maxTries": 3,
-      "waitBetweenTries": 1500
+      "waitBetweenTries": 1500,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "16HxzQ2JQPjvUjYl",
+          "name": "Google Sheets account"
+        }
+      }
     }
   ],
   "pinData": {},
@@ -328,7 +347,8 @@
   "active": false,
   "settings": {
     "executionOrder": "v1",
-    "binaryMode": "separate"
+    "binaryMode": "separate",
+    "errorWorkflow": "0xeyqLHBxYj4vbND"
   },
   "id": "euHupCK7cGgF88PO",
   "tags": []

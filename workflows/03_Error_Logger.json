@@ -99,7 +99,13 @@
       ],
       "retryOnFail": true,
       "maxTries": 3,
-      "waitBetweenTries": 1500
+      "waitBetweenTries": 1500,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "16HxzQ2JQPjvUjYl",
+          "name": "Google Sheets account"
+        }
+      }
     }
   ],
   "pinData": {},

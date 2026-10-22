@@ -44,8 +44,8 @@ In the imported nodes, create/select credentials for:
 
 ## Critical: relink workflow references
 
-- **Main → Call Company Analysis:** select the imported **02 Company Analysis** as the target in the node; verify the `company` and `chat_id` inputs are passed. This node intentionally has NO target until you choose it.
-- **Main → Settings → Error Workflow:** select the imported **03 Error Logger**. Also configure the logger on other workflows if desired.
+- **Main → Call Company Analysis:** the export targets the included **02 Company Analysis** workflow ID. Verify that this target resolves after import and that `company` and `chat_id` are passed.
+- **Main → Settings → Error Workflow:** the export references the included **03 Error Logger**. Verify this link after import; Analysis and Followups also reference it.
 - Check that the 02 Company Analysis trigger accepts all input data (or declare `company` and `chat_id` inputs) so both command flows work.
 
 ## Telegram public webhook is required
@@ -86,3 +86,11 @@ bash stop.sh                   # stop without deleting volumes
 ```
 
 Never run `docker compose down -v` unless you intend to erase local Postgres/n8n volumes. Never commit `.env` or API tokens. Compare your live demo to the final exported JSON committed to your Git repository.
+
+## Local diagnostics
+
+Run `bash check.sh` to verify container status, PostgreSQL, n8n database readiness, and access to the downloaded Ollama model. Run `bash test.sh` for isolated workflow logic tests with synthetic data; these tests do not send emails, send Telegram messages, or access Google Sheets.
+
+The Docker Ollama service listens on `http://ollama:11434` inside the Docker network. The current host mapping is `http://localhost:11435`; the two port numbers intentionally differ.
+
+If n8n reports mismatching encryption keys, preserve the existing encryption key in its persistent volume and align `.env` with it. If PostgreSQL reports password authentication failures after `.env` changes, align the database role password with the configured value. Changing environment variables alone does not update credentials in existing volumes. Keep private backups and never delete volumes as a troubleshooting shortcut.

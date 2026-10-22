@@ -1,0 +1,174 @@
+{
+  "spreadsheetId": "1wpp4WkEBkyyJyxduhQGZSgp7DCusEoNCXVlrnPVWGxQ",
+  "verifiedVia": "Google Sheets API metadata and bounded header reads using the current local credential; original tab IDs also verified in Chrome",
+  "nodes": [
+    {
+      "workflow": "Sponsorship Copilot - 02 Company Analysis",
+      "node": "Read Companies",
+      "tab": "Companies",
+      "sheetId": 886497081,
+      "credential": "Google Sheets account",
+      "status": "Verified document/tab and headers; Google Sheets access test passed"
+    },
+    {
+      "workflow": "Sponsorship Copilot - 02 Company Analysis",
+      "node": "Save Analysis",
+      "tab": "Analyses",
+      "sheetId": 1797842587,
+      "credential": "Google Sheets account",
+      "status": "Verified document/tab and headers; Google Sheets access test passed"
+    },
+    {
+      "workflow": "Sponsorship Copilot - 03 Error Logger",
+      "node": "Save Error",
+      "tab": "ErrorLogs",
+      "sheetId": 767686323,
+      "credential": "Google Sheets account",
+      "status": "Verified document/tab and headers; Google Sheets access test passed"
+    },
+    {
+      "workflow": "Sponsorship Copilot - 04 Daily Followups",
+      "node": "Read Pipeline Followups",
+      "tab": "Pipeline",
+      "sheetId": 700152727,
+      "credential": "Google Sheets account",
+      "status": "Verified document/tab and headers; Google Sheets access test passed"
+    },
+    {
+      "workflow": "Sponsorship Copilot - 04 Daily Followups",
+      "node": "Save Reminder Sent Status",
+      "tab": "Pipeline",
+      "sheetId": 700152727,
+      "credential": "Google Sheets account",
+      "status": "Verified document/tab and headers; Google Sheets access test passed"
+    },
+    {
+      "workflow": "Sponsorship Copilot - 01 Telegram Main",
+      "node": "Read Analyses for Pitch",
+      "tab": "Analyses",
+      "sheetId": 1797842587,
+      "credential": "Google Sheets account",
+      "status": "Verified document/tab and headers; Google Sheets access test passed"
+    },
+    {
+      "workflow": "Sponsorship Copilot - 01 Telegram Main",
+      "node": "Save Draft",
+      "tab": "Drafts",
+      "sheetId": 243984214,
+      "credential": "Google Sheets account",
+      "status": "Verified document/tab and headers; Google Sheets access test passed"
+    },
+    {
+      "workflow": "Sponsorship Copilot - 01 Telegram Main",
+      "node": "Read Pipeline",
+      "tab": "Analyses",
+      "sheetId": 1797842587,
+      "credential": "Google Sheets account",
+      "status": "Verified document/tab and headers; Google Sheets access test passed"
+    },
+    {
+      "workflow": "Sponsorship Copilot - 01 Telegram Main",
+      "node": "Read Companies For Update",
+      "tab": "Companies",
+      "sheetId": 886497081,
+      "credential": "Google Sheets account",
+      "status": "Verified document/tab and headers; Google Sheets access test passed"
+    },
+    {
+      "workflow": "Sponsorship Copilot - 01 Telegram Main",
+      "node": "Read Pipeline For Update",
+      "tab": "Pipeline",
+      "sheetId": 700152727,
+      "credential": "Google Sheets account",
+      "status": "Verified document/tab and headers; Google Sheets access test passed"
+    },
+    {
+      "workflow": "Sponsorship Copilot - 01 Telegram Main",
+      "node": "Save Pipeline Update",
+      "tab": "Pipeline",
+      "sheetId": 700152727,
+      "credential": "Google Sheets account",
+      "status": "Verified document/tab and headers; Google Sheets access test passed"
+    },
+    {
+      "workflow": "Sponsorship Copilot - 01 Telegram Main",
+      "node": "Read Pipeline CRM",
+      "tab": "Pipeline",
+      "sheetId": 700152727,
+      "credential": "Google Sheets account",
+      "status": "Verified document/tab and headers; Google Sheets access test passed"
+    },
+    {
+      "workflow": "Sponsorship Copilot - 01 Telegram Main",
+      "node": "Read Organization Profile",
+      "tab": "Organization",
+      "sheetId": 1094237790,
+      "credential": "Google Sheets account",
+      "status": "Verified document/tab and headers; Google Sheets access test passed"
+    },
+    {
+      "workflow": "Sponsorship Copilot - 01 Telegram Main",
+      "node": "Read Sponsor Context",
+      "tab": "Pipeline",
+      "sheetId": 700152727,
+      "credential": "Google Sheets account",
+      "status": "Verified document/tab and headers; Google Sheets access test passed"
+    },
+    {
+      "workflow": "Sponsorship Copilot - 01 Telegram Main",
+      "node": "Read Draft for Approval",
+      "tab": "Drafts",
+      "sheetId": 243984214,
+      "credential": "Google Sheets account",
+      "status": "Verified document/tab and headers; Google Sheets access test passed"
+    },
+    {
+      "workflow": "Sponsorship Copilot - 01 Telegram Main",
+      "node": "Read Company Recipient",
+      "tab": "Companies",
+      "sheetId": 886497081,
+      "credential": "Google Sheets account",
+      "status": "Verified document/tab and headers; Google Sheets access test passed"
+    },
+    {
+      "workflow": "Sponsorship Copilot - 01 Telegram Main",
+      "node": "Read Approval Settings",
+      "tab": "Organization",
+      "sheetId": 1094237790,
+      "credential": "Google Sheets account",
+      "status": "Verified document/tab and headers; Google Sheets access test passed"
+    },
+    {
+      "workflow": "Sponsorship Copilot - 01 Telegram Main",
+      "node": "Save Sent Draft Status",
+      "tab": "Drafts",
+      "sheetId": 243984214,
+      "credential": "Google Sheets account",
+      "status": "Verified document/tab and headers; Google Sheets access test passed"
+    },
+    {
+      "workflow": "Sponsorship Copilot - 01 Telegram Main",
+      "node": "Read CRM After Send",
+      "tab": "Pipeline",
+      "sheetId": 700152727,
+      "credential": "Google Sheets account",
+      "status": "Verified document/tab and headers; Google Sheets access test passed"
+    },
+    {
+      "workflow": "Sponsorship Copilot - 01 Telegram Main",
+      "node": "Save Contacted Status",
+      "tab": "Pipeline",
+      "sheetId": 700152727,
+      "credential": "Google Sheets account",
+      "status": "Verified document/tab and headers; Google Sheets access test passed"
+    },
+    {
+      "workflow": "Sponsorship Copilot - 01 Telegram Main",
+      "node": "Update Companies Status",
+      "tab": "Companies",
+      "sheetId": 886497081,
+      "credential": "Google Sheets account",
+      "status": "Verified document/tab and headers; Google Sheets access test passed"
+    }
+  ]
+}
